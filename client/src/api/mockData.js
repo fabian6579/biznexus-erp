@@ -1,0 +1,386 @@
+// Realistic fallback mock data for Vercel Cloud Live Demo Preview
+export const mockUser = {
+  id: 'usr_001',
+  name: 'Fabian J (Admin)',
+  fullName: 'Fabian J',
+  email: 'admin@biznexus.io',
+  role: 'business_owner',
+  department: 'Executive',
+  organization: {
+    _id: 'org_001',
+    name: 'Nexus Dynamics Private Limited',
+    code: 'NEXUS-01',
+    currency: 'INR',
+    currencySymbol: '₹',
+  },
+};
+
+export const mockDashboardData = {
+  kpis: {
+    totalRevenue: 1245000,
+    totalExpenses: 482000,
+    netProfit: 763000,
+    totalOrders: 48,
+    totalCustomers: 26,
+    totalEmployees: 14,
+    lowStockCount: 3,
+    pendingTasks: 7,
+  },
+  charts: {
+    monthlyTrends: [
+      { month: 'May 2026', revenue: 140000, expenses: 65000, orders: 8 },
+      { month: 'Jun 2026', revenue: 185000, expenses: 72000, orders: 11 },
+      { month: 'Jul 2026', revenue: 210000, expenses: 84000, orders: 13 },
+      { month: 'Aug 2026', revenue: 195000, expenses: 79000, orders: 10 },
+      { month: 'Sep 2026', revenue: 245000, expenses: 88000, orders: 16 },
+      { month: 'Oct 2026', revenue: 270000, expenses: 94000, orders: 18 },
+    ],
+    orderStatusDistribution: [
+      { name: 'Confirmed', value: 18, color: '#10b981' },
+      { name: 'Fulfilled', value: 22, color: '#059669' },
+      { name: 'Pending', value: 5, color: '#f59e0b' },
+      { name: 'Processing', value: 3, color: '#6366f1' },
+    ],
+    inventoryDistribution: [
+      { _id: 'Electronics', count: 12, totalStock: 340, totalValue: 420000 },
+      { _id: 'Hardware', count: 8, totalStock: 180, totalValue: 210000 },
+      { _id: 'Office Supplies', count: 15, totalStock: 520, totalValue: 95000 },
+      { _id: 'Raw Materials', count: 6, totalStock: 110, totalValue: 180000 },
+    ],
+  },
+  activities: {
+    recentOrders: [
+      {
+        _id: 'ord_101',
+        orderNumber: 'ORD-2026-048',
+        customer: { name: 'Apollo Healthcare Pvt Ltd', company: 'Apollo Group' },
+        totalAmount: 42500,
+        orderStatus: 'confirmed',
+        paymentStatus: 'paid',
+        orderDate: '2026-10-24T10:30:00.000Z',
+      },
+      {
+        _id: 'ord_102',
+        orderNumber: 'ORD-2026-047',
+        customer: { name: 'Tata Technologies', company: 'Tata Sons' },
+        totalAmount: 78000,
+        orderStatus: 'fulfilled',
+        paymentStatus: 'paid',
+        orderDate: '2026-10-23T15:15:00.000Z',
+      },
+      {
+        _id: 'ord_103',
+        orderNumber: 'ORD-2026-046',
+        customer: { name: 'Reliance Retail', company: 'RIL' },
+        totalAmount: 18500,
+        orderStatus: 'pending',
+        paymentStatus: 'unpaid',
+        orderDate: '2026-10-22T09:45:00.000Z',
+      },
+    ],
+    recentTransactions: [
+      {
+        _id: 'txn_01',
+        type: 'income',
+        category: 'Sales',
+        amount: 42500,
+        transactionDate: '2026-10-24T10:30:00.000Z',
+        description: 'Payment received for ORD-2026-048',
+      },
+      {
+        _id: 'txn_02',
+        type: 'expense',
+        category: 'Procurement',
+        amount: 19500,
+        transactionDate: '2026-10-23T12:00:00.000Z',
+        description: 'Vendor payment for PO-2026-019',
+      },
+      {
+        _id: 'txn_03',
+        type: 'expense',
+        category: 'Utilities',
+        amount: 8200,
+        transactionDate: '2026-10-21T08:30:00.000Z',
+        description: 'Office internet & cloud server hosting',
+      },
+    ],
+    upcomingTasks: [
+      {
+        _id: 'tsk_01',
+        title: 'Q4 Inventory Physical Audit',
+        priority: 'high',
+        status: 'in_progress',
+        dueDate: '2026-10-28T00:00:00.000Z',
+        project: { name: 'Operations Excellence' },
+        assignee: { fullName: 'Rajesh Sharma' },
+      },
+      {
+        _id: 'tsk_02',
+        title: 'Vendor Contract Renewal - MicroTech Supplies',
+        priority: 'medium',
+        status: 'todo',
+        dueDate: '2026-10-31T00:00:00.000Z',
+        project: { name: 'Supply Chain 2026' },
+        assignee: { fullName: 'Priya Sundaram' },
+      },
+    ],
+    lowStockProducts: [
+      { _id: 'p_01', name: 'Precision Digital Multimeter', sku: 'ELE-2041', availableQuantity: 4, minStockLevel: 10 },
+      { _id: 'p_02', name: 'Industrial Soldering Station', sku: 'HDW-1008', availableQuantity: 2, minStockLevel: 8 },
+      { _id: 'p_03', name: 'Thermal Receipt Paper (50pk)', sku: 'OFF-3012', availableQuantity: 6, minStockLevel: 15 },
+    ],
+    recentNotifications: [
+      {
+        _id: 'notif_01',
+        title: 'Stock Alert',
+        message: 'Product ELE-2041 is below minimum reorder threshold (4 left).',
+        type: 'warning',
+        createdAt: '2026-10-25T08:00:00.000Z',
+      },
+      {
+        _id: 'notif_02',
+        title: 'Order Confirmed',
+        message: 'Sales Order ORD-2026-048 was confirmed and inventory deducted.',
+        type: 'success',
+        createdAt: '2026-10-24T10:30:00.000Z',
+      },
+    ],
+  },
+};
+
+export const mockProducts = [
+  {
+    _id: 'p_01',
+    name: 'Precision Digital Multimeter',
+    sku: 'ELE-2041',
+    category: 'Electronics',
+    costPrice: 1200,
+    sellingPrice: 1850,
+    availableQuantity: 4,
+    minStockLevel: 10,
+    status: 'low_stock',
+  },
+  {
+    _id: 'p_02',
+    name: 'Industrial Soldering Station',
+    sku: 'HDW-1008',
+    category: 'Hardware',
+    costPrice: 3400,
+    sellingPrice: 4800,
+    availableQuantity: 2,
+    minStockLevel: 8,
+    status: 'low_stock',
+  },
+  {
+    _id: 'p_03',
+    name: 'Cat6 Ethernet Cable (305m)',
+    sku: 'ELE-1090',
+    category: 'Electronics',
+    costPrice: 4200,
+    sellingPrice: 5600,
+    availableQuantity: 45,
+    minStockLevel: 10,
+    status: 'in_stock',
+  },
+  {
+    _id: 'p_04',
+    name: 'Ergonomic Mesh Office Chair',
+    sku: 'OFF-4001',
+    category: 'Office Supplies',
+    costPrice: 6500,
+    sellingPrice: 9200,
+    availableQuantity: 18,
+    minStockLevel: 5,
+    status: 'in_stock',
+  },
+];
+
+export const mockEmployees = [
+  {
+    _id: 'emp_01',
+    employeeCode: 'EMP-001',
+    fullName: 'Fabian J',
+    email: 'admin@biznexus.io',
+    department: 'Executive',
+    jobTitle: 'Managing Director & Systems Architect',
+    status: 'active',
+    joiningDate: '2024-06-01',
+  },
+  {
+    _id: 'emp_02',
+    employeeCode: 'EMP-002',
+    fullName: 'Rajesh Sharma',
+    email: 'manager@biznexus.io',
+    department: 'Operations',
+    jobTitle: 'Operations & Inventory Manager',
+    status: 'active',
+    joiningDate: '2024-08-15',
+  },
+  {
+    _id: 'emp_03',
+    employeeCode: 'EMP-003',
+    fullName: 'Ananya Verma',
+    email: 'accountant@biznexus.io',
+    department: 'Finance',
+    jobTitle: 'Senior Accountant & Auditor',
+    status: 'active',
+    joiningDate: '2025-01-10',
+  },
+  {
+    _id: 'emp_04',
+    employeeCode: 'EMP-004',
+    fullName: 'Priya Sundaram',
+    email: 'employee@biznexus.io',
+    department: 'Sales',
+    jobTitle: 'Senior Sales Executive',
+    status: 'active',
+    joiningDate: '2025-03-01',
+  },
+];
+
+export const mockCustomers = [
+  {
+    _id: 'cust_01',
+    name: 'Apollo Healthcare Pvt Ltd',
+    company: 'Apollo Hospitals Group',
+    email: 'procurement@apollohospitals.com',
+    phone: '+91 98401 23456',
+    customerType: 'wholesale',
+    leadStatus: 'active',
+    address: { city: 'Chennai', state: 'Tamil Nadu' },
+  },
+  {
+    _id: 'cust_02',
+    name: 'Tata Technologies Ltd',
+    company: 'Tata Sons',
+    email: 'vendor.connect@tatatech.com',
+    phone: '+91 98410 87654',
+    customerType: 'enterprise',
+    leadStatus: 'active',
+    address: { city: 'Pune', state: 'Maharashtra' },
+  },
+  {
+    _id: 'cust_03',
+    name: 'Reliance Retail Ventures',
+    company: 'Reliance Industries',
+    email: 'orders@relianceretail.com',
+    phone: '+91 98840 55443',
+    customerType: 'wholesale',
+    leadStatus: 'active',
+    address: { city: 'Mumbai', state: 'Maharashtra' },
+  },
+];
+
+export const mockSalesOrders = [
+  {
+    _id: 'ord_101',
+    orderNumber: 'ORD-2026-048',
+    customer: { _id: 'cust_01', name: 'Apollo Healthcare Pvt Ltd', company: 'Apollo Group' },
+    subtotal: 38000,
+    tax: 4500,
+    totalAmount: 42500,
+    orderStatus: 'confirmed',
+    paymentStatus: 'paid',
+    orderDate: '2026-10-24T10:30:00.000Z',
+    items: [
+      { product: 'p_01', name: 'Precision Digital Multimeter', quantity: 10, unitPrice: 1850, total: 18500 },
+      { product: 'p_03', name: 'Cat6 Ethernet Cable (305m)', quantity: 4, unitPrice: 5600, total: 22400 },
+    ],
+  },
+  {
+    _id: 'ord_102',
+    orderNumber: 'ORD-2026-047',
+    customer: { _id: 'cust_02', name: 'Tata Technologies Ltd', company: 'Tata Sons' },
+    subtotal: 70000,
+    tax: 8000,
+    totalAmount: 78000,
+    orderStatus: 'fulfilled',
+    paymentStatus: 'paid',
+    orderDate: '2026-10-23T15:15:00.000Z',
+    items: [
+      { product: 'p_04', name: 'Ergonomic Mesh Office Chair', quantity: 8, unitPrice: 9200, total: 73600 },
+    ],
+  },
+];
+
+export const mockPurchases = [
+  {
+    _id: 'po_01',
+    poNumber: 'PO-2026-019',
+    supplier: { name: 'MicroTech Component Importers' },
+    totalAmount: 19500,
+    status: 'received',
+    orderDate: '2026-10-20T10:00:00.000Z',
+  },
+  {
+    _id: 'po_02',
+    poNumber: 'PO-2026-020',
+    supplier: { name: 'Standard Office Furnishings Co' },
+    totalAmount: 32000,
+    status: 'ordered',
+    orderDate: '2026-10-22T14:30:00.000Z',
+  },
+];
+
+export const mockFinance = [
+  {
+    _id: 'txn_01',
+    type: 'income',
+    category: 'Sales',
+    amount: 42500,
+    transactionDate: '2026-10-24T10:30:00.000Z',
+    description: 'Payment received for ORD-2026-048',
+  },
+  {
+    _id: 'txn_02',
+    type: 'expense',
+    category: 'Procurement',
+    amount: 19500,
+    transactionDate: '2026-10-23T12:00:00.000Z',
+    description: 'Vendor payment for PO-2026-019',
+  },
+  {
+    _id: 'txn_03',
+    type: 'expense',
+    category: 'Utilities',
+    amount: 8200,
+    transactionDate: '2026-10-21T08:30:00.000Z',
+    description: 'Office internet & cloud server hosting',
+  },
+];
+
+export const mockProjects = [
+  {
+    _id: 'proj_01',
+    name: 'Operations Excellence & Inventory Optimization',
+    description: 'Centralize inventory management and reduce stockouts below 2%',
+    status: 'in_progress',
+    progress: 75,
+  },
+  {
+    _id: 'proj_02',
+    name: 'Q4 B2B Sales Pipeline Expansion',
+    description: 'Target SMB healthcare and technology clients across South India',
+    status: 'in_progress',
+    progress: 60,
+  },
+];
+
+export const mockTasks = [
+  {
+    _id: 'tsk_01',
+    title: 'Q4 Inventory Physical Audit',
+    priority: 'high',
+    status: 'in_progress',
+    dueDate: '2026-10-28',
+    project: { name: 'Operations Excellence' },
+  },
+  {
+    _id: 'tsk_02',
+    title: 'Vendor Contract Renewal - MicroTech Supplies',
+    priority: 'medium',
+    status: 'todo',
+    dueDate: '2026-10-31',
+    project: { name: 'Supply Chain 2026' },
+  },
+];

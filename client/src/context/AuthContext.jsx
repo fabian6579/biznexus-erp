@@ -4,8 +4,14 @@ import axiosClient from '../api/axiosClient';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [organization, setOrganization] = useState(null);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('biznexus_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [organization, setOrganization] = useState(() => {
+    const saved = localStorage.getItem('biznexus_user');
+    return saved ? JSON.parse(saved).organization : null;
+  });
   const [loading, setLoading] = useState(true);
 
   // Check current session on mount
@@ -14,11 +20,24 @@ export const AuthProvider = ({ children }) => {
       const res = await axiosClient.get('/auth/me');
       if (res.success) {
         setUser(res.user);
-        setOrganization(res.organization);
+        setOrganization(res.organization || res.user?.organization);
+        localStorage.setItem('biznexus_user', JSON.stringify(res.user));
       }
     } catch (err) {
-      setUser(null);
-      setOrganization(null);
+      const savedUser = localStorage.getItem('biznexus_user');
+      if (savedUser) {
+        try {
+          const u = JSON.parse(savedUser);
+          setUser(u);
+          setOrganization(u.organization);
+        } catch (e) {
+          setUser(null);
+          setOrganization(null);
+        }
+      } else {
+        setUser(null);
+        setOrganization(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -35,6 +54,7 @@ export const AuthProvider = ({ children }) => {
       if (res.token) {
         localStorage.setItem('biznexus_token', res.token);
       }
+      localStorage.setItem('biznexus_user', JSON.stringify(res.user));
       setUser(res.user);
       setOrganization(res.user.organization);
       return res;
@@ -49,6 +69,7 @@ export const AuthProvider = ({ children }) => {
       if (res.token) {
         localStorage.setItem('biznexus_token', res.token);
       }
+      localStorage.setItem('biznexus_user', JSON.stringify(res.user));
       setUser(res.user);
       setOrganization(res.user.organization);
       return res;
@@ -64,6 +85,7 @@ export const AuthProvider = ({ children }) => {
       // Ignore network error during logout
     } finally {
       localStorage.removeItem('biznexus_token');
+      localStorage.removeItem('biznexus_user');
       setUser(null);
       setOrganization(null);
       window.location.href = '/login';
@@ -73,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   // Helper to check roles
   const hasRole = (...roles) => {
     if (!user) return false;
-    if (user.role === 'super_admin') return true;
+    if (user.role === 'super_admin' || user.role === 'business_owner') return true;
     return roles.includes(user.role);
   };
 
