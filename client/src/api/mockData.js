@@ -1,18 +1,81 @@
-// Realistic fallback mock data for Vercel Cloud Live Demo Preview
-export const mockUser = {
-  id: 'usr_001',
-  name: 'Fabian J (Admin)',
-  fullName: 'Fabian J',
-  email: 'admin@biznexus.io',
-  role: 'business_owner',
-  department: 'Executive',
-  organization: {
-    _id: 'org_001',
-    name: 'Nexus Dynamics Private Limited',
-    code: 'NEXUS-01',
-    currency: 'INR',
-    currencySymbol: '₹',
-  },
+// Comprehensive mock dataset for BizNexus ERP Vercel Cloud Live Demo Preview
+export const getDemoUserByEmail = (email) => {
+  const normalized = (email || '').toLowerCase().trim();
+
+  if (normalized.includes('manager')) {
+    return {
+      id: 'usr_002',
+      name: 'Rajesh Sharma (Operations Manager)',
+      fullName: 'Rajesh Sharma',
+      email: 'manager@biznexus.io',
+      role: 'manager',
+      department: 'Operations',
+      jobTitle: 'Operations & Inventory Head',
+      organization: {
+        _id: 'org_001',
+        name: 'Nexus Dynamics Private Limited',
+        code: 'NEXUS-01',
+        currency: 'INR',
+        currencySymbol: '₹',
+      },
+    };
+  }
+
+  if (normalized.includes('accountant')) {
+    return {
+      id: 'usr_003',
+      name: 'Ananya Verma (Accountant)',
+      fullName: 'Ananya Verma',
+      email: 'accountant@biznexus.io',
+      role: 'accountant',
+      department: 'Finance',
+      jobTitle: 'Chief Financial Controller',
+      organization: {
+        _id: 'org_001',
+        name: 'Nexus Dynamics Private Limited',
+        code: 'NEXUS-01',
+        currency: 'INR',
+        currencySymbol: '₹',
+      },
+    };
+  }
+
+  if (normalized.includes('employee')) {
+    return {
+      id: 'usr_004',
+      name: 'Priya Sundaram (Employee)',
+      fullName: 'Priya Sundaram',
+      email: 'employee@biznexus.io',
+      role: 'employee',
+      department: 'Sales',
+      jobTitle: 'Senior Sales Executive',
+      organization: {
+        _id: 'org_001',
+        name: 'Nexus Dynamics Private Limited',
+        code: 'NEXUS-01',
+        currency: 'INR',
+        currencySymbol: '₹',
+      },
+    };
+  }
+
+  // Default: Business Owner (Fabian J)
+  return {
+    id: 'usr_001',
+    name: 'Fabian J (Admin)',
+    fullName: 'Fabian J',
+    email: 'admin@biznexus.io',
+    role: 'business_owner',
+    department: 'Executive',
+    jobTitle: 'Managing Director & Enterprise Architect',
+    organization: {
+      _id: 'org_001',
+      name: 'Nexus Dynamics Private Limited',
+      code: 'NEXUS-01',
+      currency: 'INR',
+      currencySymbol: '₹',
+    },
+  };
 };
 
 export const mockDashboardData = {
@@ -36,10 +99,10 @@ export const mockDashboardData = {
       { month: 'Oct 2026', revenue: 270000, expenses: 94000, orders: 18 },
     ],
     orderStatusDistribution: [
-      { name: 'Confirmed', value: 18, color: '#10b981' },
-      { name: 'Fulfilled', value: 22, color: '#059669' },
-      { name: 'Pending', value: 5, color: '#f59e0b' },
-      { name: 'Processing', value: 3, color: '#6366f1' },
+      { status: 'confirmed', count: 18 },
+      { status: 'fulfilled', count: 22 },
+      { status: 'pending', count: 5 },
+      { status: 'processing', count: 3 },
     ],
     inventoryDistribution: [
       { _id: 'Electronics', count: 12, totalStock: 340, totalValue: 420000 },
@@ -62,7 +125,7 @@ export const mockDashboardData = {
       {
         _id: 'ord_102',
         orderNumber: 'ORD-2026-047',
-        customer: { name: 'Tata Technologies', company: 'Tata Sons' },
+        customer: { name: 'Tata Technologies Ltd', company: 'Tata Sons' },
         totalAmount: 78000,
         orderStatus: 'fulfilled',
         paymentStatus: 'paid',
@@ -71,11 +134,29 @@ export const mockDashboardData = {
       {
         _id: 'ord_103',
         orderNumber: 'ORD-2026-046',
-        customer: { name: 'Reliance Retail', company: 'RIL' },
+        customer: { name: 'Reliance Retail Ventures', company: 'RIL' },
         totalAmount: 18500,
         orderStatus: 'pending',
         paymentStatus: 'unpaid',
         orderDate: '2026-10-22T09:45:00.000Z',
+      },
+      {
+        _id: 'ord_104',
+        orderNumber: 'ORD-2026-045',
+        customer: { name: 'Infosys BPM Systems', company: 'Infosys Ltd' },
+        totalAmount: 31200,
+        orderStatus: 'confirmed',
+        paymentStatus: 'paid',
+        orderDate: '2026-10-21T11:20:00.000Z',
+      },
+      {
+        _id: 'ord_105',
+        orderNumber: 'ORD-2026-044',
+        customer: { name: 'L&T Heavy Engineering', company: 'Larsen & Toubro' },
+        totalAmount: 94000,
+        orderStatus: 'fulfilled',
+        paymentStatus: 'paid',
+        orderDate: '2026-10-20T16:00:00.000Z',
       },
     ],
     recentTransactions: [
@@ -103,6 +184,14 @@ export const mockDashboardData = {
         transactionDate: '2026-10-21T08:30:00.000Z',
         description: 'Office internet & cloud server hosting',
       },
+      {
+        _id: 'txn_04',
+        type: 'income',
+        category: 'Sales',
+        amount: 78000,
+        transactionDate: '2026-10-23T15:15:00.000Z',
+        description: 'Payment received for ORD-2026-047',
+      },
     ],
     upcomingTasks: [
       {
@@ -123,16 +212,46 @@ export const mockDashboardData = {
         project: { name: 'Supply Chain 2026' },
         assignee: { fullName: 'Priya Sundaram' },
       },
+      {
+        _id: 'tsk_03',
+        title: 'Monthly GST Tax Filing & Reconciliation',
+        priority: 'high',
+        status: 'review',
+        dueDate: '2026-10-30T00:00:00.000Z',
+        project: { name: 'Corporate Compliance' },
+        assignee: { fullName: 'Ananya Verma' },
+      },
     ],
     lowStockProducts: [
-      { _id: 'p_01', name: 'Precision Digital Multimeter', sku: 'ELE-2041', availableQuantity: 4, minStockLevel: 10 },
-      { _id: 'p_02', name: 'Industrial Soldering Station', sku: 'HDW-1008', availableQuantity: 2, minStockLevel: 8 },
-      { _id: 'p_03', name: 'Thermal Receipt Paper (50pk)', sku: 'OFF-3012', availableQuantity: 6, minStockLevel: 15 },
+      {
+        _id: 'p_01',
+        name: 'Precision Digital Multimeter',
+        sku: 'ELE-2041',
+        availableQuantity: 4,
+        minStockLevel: 10,
+        unit: 'units',
+      },
+      {
+        _id: 'p_02',
+        name: 'Industrial Soldering Station',
+        sku: 'HDW-1008',
+        availableQuantity: 2,
+        minStockLevel: 8,
+        unit: 'units',
+      },
+      {
+        _id: 'p_03',
+        name: 'Thermal Receipt Paper (50pk)',
+        sku: 'OFF-3012',
+        availableQuantity: 6,
+        minStockLevel: 15,
+        unit: 'packs',
+      },
     ],
     recentNotifications: [
       {
         _id: 'notif_01',
-        title: 'Stock Alert',
+        title: 'Critical Stock Alert',
         message: 'Product ELE-2041 is below minimum reorder threshold (4 left).',
         type: 'warning',
         createdAt: '2026-10-25T08:00:00.000Z',
@@ -140,9 +259,16 @@ export const mockDashboardData = {
       {
         _id: 'notif_02',
         title: 'Order Confirmed',
-        message: 'Sales Order ORD-2026-048 was confirmed and inventory deducted.',
+        message: 'Sales Order ORD-2026-048 confirmed. Inventory automatically decremented.',
         type: 'success',
         createdAt: '2026-10-24T10:30:00.000Z',
+      },
+      {
+        _id: 'notif_03',
+        title: 'Goods Receipt Note Generated',
+        message: 'PO-2026-019 received and 150 units added to warehouse.',
+        type: 'info',
+        createdAt: '2026-10-23T12:00:00.000Z',
       },
     ],
   },
@@ -158,6 +284,7 @@ export const mockProducts = [
     sellingPrice: 1850,
     availableQuantity: 4,
     minStockLevel: 10,
+    unit: 'units',
     status: 'low_stock',
   },
   {
@@ -169,17 +296,19 @@ export const mockProducts = [
     sellingPrice: 4800,
     availableQuantity: 2,
     minStockLevel: 8,
+    unit: 'units',
     status: 'low_stock',
   },
   {
     _id: 'p_03',
-    name: 'Cat6 Ethernet Cable (305m)',
+    name: 'Cat6 Ethernet Cable (305m Box)',
     sku: 'ELE-1090',
     category: 'Electronics',
     costPrice: 4200,
     sellingPrice: 5600,
     availableQuantity: 45,
     minStockLevel: 10,
+    unit: 'boxes',
     status: 'in_stock',
   },
   {
@@ -191,6 +320,31 @@ export const mockProducts = [
     sellingPrice: 9200,
     availableQuantity: 18,
     minStockLevel: 5,
+    unit: 'units',
+    status: 'in_stock',
+  },
+  {
+    _id: 'p_05',
+    name: 'Thermal Receipt Paper (50pk)',
+    sku: 'OFF-3012',
+    category: 'Office Supplies',
+    costPrice: 850,
+    sellingPrice: 1350,
+    availableQuantity: 6,
+    minStockLevel: 15,
+    unit: 'packs',
+    status: 'low_stock',
+  },
+  {
+    _id: 'p_06',
+    name: 'Heavy Duty Power Inverter 2kVA',
+    sku: 'ELE-5501',
+    category: 'Electronics',
+    costPrice: 14000,
+    sellingPrice: 18500,
+    availableQuantity: 12,
+    minStockLevel: 4,
+    unit: 'units',
     status: 'in_stock',
   },
 ];
@@ -202,8 +356,9 @@ export const mockEmployees = [
     fullName: 'Fabian J',
     email: 'admin@biznexus.io',
     department: 'Executive',
-    jobTitle: 'Managing Director & Systems Architect',
+    jobTitle: 'Managing Director & Enterprise Architect',
     status: 'active',
+    phone: '+91 98400 11223',
     joiningDate: '2024-06-01',
   },
   {
@@ -214,6 +369,7 @@ export const mockEmployees = [
     department: 'Operations',
     jobTitle: 'Operations & Inventory Manager',
     status: 'active',
+    phone: '+91 98401 22334',
     joiningDate: '2024-08-15',
   },
   {
@@ -222,8 +378,9 @@ export const mockEmployees = [
     fullName: 'Ananya Verma',
     email: 'accountant@biznexus.io',
     department: 'Finance',
-    jobTitle: 'Senior Accountant & Auditor',
+    jobTitle: 'Chief Financial Controller',
     status: 'active',
+    phone: '+91 98402 33445',
     joiningDate: '2025-01-10',
   },
   {
@@ -234,7 +391,19 @@ export const mockEmployees = [
     department: 'Sales',
     jobTitle: 'Senior Sales Executive',
     status: 'active',
+    phone: '+91 98403 44556',
     joiningDate: '2025-03-01',
+  },
+  {
+    _id: 'emp_05',
+    employeeCode: 'EMP-005',
+    fullName: 'Karthik Raja',
+    email: 'karthik@biznexus.io',
+    department: 'Operations',
+    jobTitle: 'Warehouse Supervisor',
+    status: 'active',
+    phone: '+91 98404 55667',
+    joiningDate: '2025-04-12',
   },
 ];
 
@@ -248,6 +417,7 @@ export const mockCustomers = [
     customerType: 'wholesale',
     leadStatus: 'active',
     address: { city: 'Chennai', state: 'Tamil Nadu' },
+    createdAt: '2024-09-01T00:00:00.000Z',
   },
   {
     _id: 'cust_02',
@@ -258,6 +428,7 @@ export const mockCustomers = [
     customerType: 'enterprise',
     leadStatus: 'active',
     address: { city: 'Pune', state: 'Maharashtra' },
+    createdAt: '2024-10-15T00:00:00.000Z',
   },
   {
     _id: 'cust_03',
@@ -268,6 +439,18 @@ export const mockCustomers = [
     customerType: 'wholesale',
     leadStatus: 'active',
     address: { city: 'Mumbai', state: 'Maharashtra' },
+    createdAt: '2024-11-20T00:00:00.000Z',
+  },
+  {
+    _id: 'cust_04',
+    name: 'Infosys BPM Systems',
+    company: 'Infosys Limited',
+    email: 'admin.support@infosys.com',
+    phone: '+91 98765 43210',
+    customerType: 'enterprise',
+    leadStatus: 'active',
+    address: { city: 'Bengaluru', state: 'Karnataka' },
+    createdAt: '2025-01-10T00:00:00.000Z',
   },
 ];
 
@@ -299,6 +482,20 @@ export const mockSalesOrders = [
     orderDate: '2026-10-23T15:15:00.000Z',
     items: [
       { product: 'p_04', name: 'Ergonomic Mesh Office Chair', quantity: 8, unitPrice: 9200, total: 73600 },
+    ],
+  },
+  {
+    _id: 'ord_103',
+    orderNumber: 'ORD-2026-046',
+    customer: { _id: 'cust_03', name: 'Reliance Retail Ventures', company: 'Reliance Industries' },
+    subtotal: 16500,
+    tax: 2000,
+    totalAmount: 18500,
+    orderStatus: 'pending',
+    paymentStatus: 'unpaid',
+    orderDate: '2026-10-22T09:45:00.000Z',
+    items: [
+      { product: 'p_05', name: 'Thermal Receipt Paper (50pk)', quantity: 15, unitPrice: 1350, total: 20250 },
     ],
   },
 ];
@@ -347,6 +544,14 @@ export const mockFinance = [
     transactionDate: '2026-10-21T08:30:00.000Z',
     description: 'Office internet & cloud server hosting',
   },
+  {
+    _id: 'txn_04',
+    type: 'income',
+    category: 'Sales',
+    amount: 78000,
+    transactionDate: '2026-10-23T15:15:00.000Z',
+    description: 'Payment received for ORD-2026-047',
+  },
 ];
 
 export const mockProjects = [
@@ -382,5 +587,28 @@ export const mockTasks = [
     status: 'todo',
     dueDate: '2026-10-31',
     project: { name: 'Supply Chain 2026' },
+  },
+];
+
+export const mockSuppliers = [
+  {
+    _id: 'sup_01',
+    supplierCode: 'SUP-001',
+    name: 'MicroTech Component Importers',
+    contactPerson: 'Suresh Menon',
+    email: 'sales@microtech.in',
+    phone: '+91 98400 99887',
+    paymentTerms: 'Net 30',
+    status: 'active',
+  },
+  {
+    _id: 'sup_02',
+    supplierCode: 'SUP-002',
+    name: 'Standard Office Furnishings Co',
+    contactPerson: 'Meera Nambiar',
+    email: 'orders@standardofficeto.com',
+    phone: '+91 98411 77665',
+    paymentTerms: 'Net 15',
+    status: 'active',
   },
 ];

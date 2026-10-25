@@ -1,12 +1,13 @@
 import axios from 'axios';
 import {
-  mockUser,
+  getDemoUserByEmail,
   mockDashboardData,
   mockProducts,
   mockEmployees,
   mockCustomers,
   mockSalesOrders,
   mockPurchases,
+  mockSuppliers,
   mockFinance,
   mockProjects,
   mockTasks,
@@ -32,142 +33,172 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor with graceful mock fallback for Vercel static deployments
+// Centralized mock data dispatcher for live cloud preview mode
+const handleMockFallback = (url, config = {}) => {
+  const targetUrl = url || '';
+  console.log(`[BizNexus Live Demo Mode]: Serving mock data for ${targetUrl}`);
+
+  // 1. Authentication
+  if (targetUrl.includes('/auth/login')) {
+    let email = 'admin@biznexus.io';
+    try {
+      const parsed = typeof config.data === 'string' ? JSON.parse(config.data || '{}') : config.data || {};
+      if (parsed.email) email = parsed.email;
+    } catch (e) {}
+
+    const user = getDemoUserByEmail(email);
+    localStorage.setItem('biznexus_token', 'demo_token_biznexus_enterprise_2026');
+    localStorage.setItem('biznexus_user', JSON.stringify(user));
+
+    return Promise.resolve({
+      success: true,
+      token: 'demo_token_biznexus_enterprise_2026',
+      user,
+    });
+  }
+
+  if (targetUrl.includes('/auth/me')) {
+    const savedUser = localStorage.getItem('biznexus_user');
+    let user = getDemoUserByEmail('admin@biznexus.io');
+    if (savedUser) {
+      try {
+        user = JSON.parse(savedUser);
+      } catch (e) {}
+    }
+
+    return Promise.resolve({
+      success: true,
+      user,
+      organization: user.organization,
+    });
+  }
+
+  // 2. Executive Dashboard
+  if (targetUrl.includes('/dashboard')) {
+    return Promise.resolve({
+      success: true,
+      data: mockDashboardData,
+    });
+  }
+
+  // 3. Products / Inventory
+  if (targetUrl.includes('/products')) {
+    return Promise.resolve({
+      success: true,
+      data: mockProducts,
+      pagination: { total: mockProducts.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 4. Employees / Workforce
+  if (targetUrl.includes('/employees')) {
+    return Promise.resolve({
+      success: true,
+      data: mockEmployees,
+      pagination: { total: mockEmployees.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 5. Customers / CRM
+  if (targetUrl.includes('/customers')) {
+    return Promise.resolve({
+      success: true,
+      data: mockCustomers,
+      pagination: { total: mockCustomers.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 6. Sales / Orders
+  if (targetUrl.includes('/sales') || targetUrl.includes('/orders')) {
+    return Promise.resolve({
+      success: true,
+      data: mockSalesOrders,
+      pagination: { total: mockSalesOrders.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 7. Purchases & Suppliers
+  if (targetUrl.includes('/purchases')) {
+    return Promise.resolve({
+      success: true,
+      data: mockPurchases,
+      pagination: { total: mockPurchases.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  if (targetUrl.includes('/suppliers')) {
+    return Promise.resolve({
+      success: true,
+      data: mockSuppliers,
+      pagination: { total: mockSuppliers.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 8. Finance & Transactions
+  if (targetUrl.includes('/finance') || targetUrl.includes('/transactions')) {
+    return Promise.resolve({
+      success: true,
+      data: mockFinance,
+      pagination: { total: mockFinance.length, pages: 1, page: 1, limit: 10 },
+    });
+  }
+
+  // 9. Projects & Kanban Tasks
+  if (targetUrl.includes('/projects')) {
+    return Promise.resolve({
+      success: true,
+      data: mockProjects,
+    });
+  }
+
+  if (targetUrl.includes('/tasks')) {
+    return Promise.resolve({
+      success: true,
+      data: mockTasks,
+    });
+  }
+
+  // 10. Notifications
+  if (targetUrl.includes('/notifications')) {
+    return Promise.resolve({
+      success: true,
+      data: mockDashboardData.activities.recentNotifications,
+    });
+  }
+
+  // Default response for mutations or unmocked routes
+  return Promise.resolve({
+    success: true,
+    message: 'Operation performed successfully (Demo Mode)',
+    data: {},
+  });
+};
+
+// Response interceptor: handles both HTTP 200 SPA HTML rewrites and network/status errors
 axiosClient.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    // If Vercel rewrote the API route to index.html (returns HTML string with status 200)
+    const isHtml =
+      typeof response.data === 'string' &&
+      (response.data.includes('<!doctype') || response.data.includes('<html') || response.data.includes('window.$RefreshReg$'));
+
+    if (isHtml || (!response.data?.success && typeof response.data !== 'object')) {
+      const url = response.config?.url || '';
+      return handleMockFallback(url, response.config);
+    }
+
+    return response.data;
+  },
   (error) => {
     const url = error.config?.url || '';
     const status = error.response?.status;
-    const isStaticDeployError = status === 405 || status === 404 || error.code === 'ERR_NETWORK' || !error.response;
+    const isStaticDeploy = status === 405 || status === 404 || error.code === 'ERR_NETWORK' || !error.response;
 
-    // Gracefully handle live cloud preview mode when backend is not deployed on the same origin
-    if (isStaticDeployError) {
-      console.warn(`[BizNexus Live Demo Mode]: Mocking response for ${url}`);
-
-      if (url.includes('/auth/login')) {
-        let reqUser = { ...mockUser };
-        try {
-          const body = JSON.parse(error.config.data || '{}');
-          if (body.email) {
-            reqUser.email = body.email;
-            if (body.email.includes('manager')) {
-              reqUser.name = 'Rajesh Sharma (Operations Manager)';
-              reqUser.role = 'manager';
-              reqUser.department = 'Operations';
-            } else if (body.email.includes('accountant')) {
-              reqUser.name = 'Ananya Verma (Accountant)';
-              reqUser.role = 'accountant';
-              reqUser.department = 'Finance';
-            } else if (body.email.includes('employee')) {
-              reqUser.name = 'Priya Sundaram (Employee)';
-              reqUser.role = 'employee';
-              reqUser.department = 'Sales';
-            }
-          }
-        } catch (e) {}
-
-        return Promise.resolve({
-          success: true,
-          token: 'demo_token_biznexus_enterprise_2026',
-          user: reqUser,
-        });
-      }
-
-      if (url.includes('/auth/me')) {
-        const savedUser = localStorage.getItem('biznexus_user');
-        const user = savedUser ? JSON.parse(savedUser) : mockUser;
-        return Promise.resolve({
-          success: true,
-          user,
-          organization: user.organization || mockUser.organization,
-        });
-      }
-
-      if (url.includes('/dashboard/summary')) {
-        return Promise.resolve({
-          success: true,
-          data: mockDashboardData,
-        });
-      }
-
-      if (url.includes('/products')) {
-        return Promise.resolve({
-          success: true,
-          data: mockProducts,
-          pagination: { total: mockProducts.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/employees')) {
-        return Promise.resolve({
-          success: true,
-          data: mockEmployees,
-          pagination: { total: mockEmployees.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/customers')) {
-        return Promise.resolve({
-          success: true,
-          data: mockCustomers,
-          pagination: { total: mockCustomers.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/sales') || url.includes('/orders')) {
-        return Promise.resolve({
-          success: true,
-          data: mockSalesOrders,
-          pagination: { total: mockSalesOrders.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/purchases')) {
-        return Promise.resolve({
-          success: true,
-          data: mockPurchases,
-          pagination: { total: mockPurchases.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/finance') || url.includes('/transactions')) {
-        return Promise.resolve({
-          success: true,
-          data: mockFinance,
-          pagination: { total: mockFinance.length, pages: 1, page: 1, limit: 10 },
-        });
-      }
-
-      if (url.includes('/projects')) {
-        return Promise.resolve({
-          success: true,
-          data: mockProjects,
-        });
-      }
-
-      if (url.includes('/tasks')) {
-        return Promise.resolve({
-          success: true,
-          data: mockTasks,
-        });
-      }
-
-      if (url.includes('/notifications')) {
-        return Promise.resolve({
-          success: true,
-          data: mockDashboardData.activities.recentNotifications,
-        });
-      }
-
-      // Default safe response for other actions (CRUD adds, updates, deletes)
-      return Promise.resolve({
-        success: true,
-        message: 'Action completed successfully in demo preview mode.',
-        data: {},
-      });
+    if (isStaticDeploy) {
+      return handleMockFallback(url, error.config);
     }
 
-    if (error.response?.status === 401 && !window.location.pathname.startsWith('/login')) {
+    if (status === 401 && !window.location.pathname.startsWith('/login')) {
       localStorage.removeItem('biznexus_token');
       localStorage.removeItem('biznexus_user');
       if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
