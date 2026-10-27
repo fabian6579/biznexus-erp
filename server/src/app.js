@@ -26,6 +26,7 @@ import reportRoutes from './routes/reportRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
+import { runSeed } from './seeders/seed.js';
 
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -85,6 +86,30 @@ app.get('/api/health', (req, res) => {
     service: 'BizNexus ERP API',
     version: '1.0.0',
   });
+});
+
+// Database seeding trigger endpoint (populates demo accounts and collections if empty)
+app.get('/api/seed', async (req, res) => {
+  try {
+    await runSeed(false);
+    res.status(200).json({
+      success: true,
+      message: 'BizNexus ERP database successfully seeded with all 15 collections and 4 demo accounts!',
+      credentials: [
+        { role: 'Business Owner', email: 'admin@biznexus.io', password: 'Password123!' },
+        { role: 'Manager', email: 'manager@biznexus.io', password: 'Password123!' },
+        { role: 'Accountant', email: 'accountant@biznexus.io', password: 'Password123!' },
+        { role: 'Employee', email: 'employee@biznexus.io', password: 'Password123!' },
+      ],
+    });
+  } catch (err) {
+    console.error('[API /seed Error]:', err.message);
+    res.status(500).json({
+      success: false,
+      message: 'Database seeding failed',
+      error: err.message,
+    });
+  }
 });
 
 // Root API information endpoint

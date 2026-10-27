@@ -3,6 +3,8 @@ dotenv.config();
 
 import app from './app.js';
 import { connectDB } from './config/db.js';
+import { User } from './models/index.js';
+import { runSeed } from './seeders/seed.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -10,6 +12,21 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
+
+    // Auto-seed demo accounts and initial enterprise data if database is empty
+    try {
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        console.log('[Auto-Seed]: No users found in database. Auto-seeding initial demo data...');
+        await runSeed(false);
+        console.log('[Auto-Seed]: Database seeded successfully!');
+      } else {
+        console.log(`[Database Ready]: ${userCount} users found in database.`);
+      }
+    } catch (seedErr) {
+      console.warn('[Auto-Seed Warning]: Seeding skipped or encountered error:', seedErr.message);
+    }
+
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`=========================================`);
       console.log(`  BizNexus ERP Server Running On Port ${PORT}`);

@@ -20,17 +20,20 @@ import {
   AuditLog,
 } from '../models/index.js';
 
-const seedDatabase = async () => {
+const seedDatabase = async (exitOnComplete = true) => {
   try {
     const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/biznexus_erp';
 
-    if (!process.env.MONGODB_URI && !process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
-      console.warn('[Seed]: No cloud MONGODB_URI provided in production environment. Skipping seed.');
-      process.exit(0);
-    }
+    if (mongoose.connection.readyState !== 1) {
+      if (!process.env.MONGODB_URI && !process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
+        console.warn('[Seed]: No cloud MONGODB_URI provided in production environment. Skipping seed.');
+        if (exitOnComplete) process.exit(0);
+        return false;
+      }
 
-    console.log(`[Seed]: Connecting to MongoDB: ${mongoUri.includes('@') ? mongoUri.split('@')[1] : mongoUri}`);
-    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
+      console.log(`[Seed]: Connecting to MongoDB: ${mongoUri.includes('@') ? mongoUri.split('@')[1] : mongoUri}`);
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
+    }
 
     console.log('[Seed]: Clearing existing data...');
     await Promise.all([
@@ -828,15 +831,28 @@ const seedDatabase = async () => {
     console.log('    4. Employee       : employee@biznexus.io   / Password123!');
     console.log('====================================================');
 
-    process.exit(0);
-  } catch (error) {
-    console.error('[Seed Error]:', error.message);
-    if (process.env.NODE_ENV === 'production') {
-      console.warn('[Seed]: Continuing deployment despite seed error.');
+    if (exitOnComplete) {
       process.exit(0);
     }
-    process.exit(1);
+    return true;
+  } catch (error) {
+    console.error('[Seed Error]:', error.message);
+    if (exitOnComplete) {
+      if (process.env.NODE_ENV === 'production') {
+        console.warn('[Seed]: Continuing deployment despite seed error.');
+        process.exit(0);
+      }
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
-seedDatabase();
+export const runSeed = (exitOnComplete = false) => seedDatabase(exitOnComplete);
+export default seedDatabase;
+
+// Auto-run if executed directly as a script (e.g., node seed.js or npm run seed)
+const isCLI = process.argv[1] && (process.argv[1].endsWith('seed.js') || process.argv[1].endsWith('seed'));
+if (isCLI) {
+  seedDatabase(true);
+}
