@@ -22,9 +22,15 @@ import {
 
 const seedDatabase = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/biznexus_erp';
-    console.log(`[Seed]: Connecting to MongoDB: ${mongoUri}`);
-    await mongoose.connect(mongoUri);
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/biznexus_erp';
+
+    if (!process.env.MONGODB_URI && !process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
+      console.warn('[Seed]: No cloud MONGODB_URI provided in production environment. Skipping seed.');
+      process.exit(0);
+    }
+
+    console.log(`[Seed]: Connecting to MongoDB: ${mongoUri.includes('@') ? mongoUri.split('@')[1] : mongoUri}`);
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
 
     console.log('[Seed]: Clearing existing data...');
     await Promise.all([
@@ -824,7 +830,11 @@ const seedDatabase = async () => {
 
     process.exit(0);
   } catch (error) {
-    console.error('[Seed Error]:', error);
+    console.error('[Seed Error]:', error.message);
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('[Seed]: Continuing deployment despite seed error.');
+      process.exit(0);
+    }
     process.exit(1);
   }
 };

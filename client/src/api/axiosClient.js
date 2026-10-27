@@ -13,8 +13,11 @@ import {
   mockTasks,
 } from './mockData';
 
+const rawBaseUrl = import.meta.env.VITE_API_URL || '/api';
+const baseURL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : (rawBaseUrl === '/api' ? '/api' : `${rawBaseUrl.replace(/\/$/, '')}/api`);
+
 const axiosClient = axios.create({
-  baseURL: '/api',
+  baseURL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

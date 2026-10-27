@@ -87,6 +87,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Root API information endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    service: 'BizNexus ERP Production API',
+    status: 'operational',
+    healthCheck: '/api/health',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Mount modular API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
